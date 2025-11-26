@@ -1,3 +1,4 @@
+<!-- Updated index.html -->
 <!doctype html>
 <html lang="fr">
 
@@ -12,6 +13,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
     rel="stylesheet">
+  <!-- Add Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 </head>
 
 <body>
@@ -22,17 +25,32 @@
     <!-- Top Header -->
     <header class="app-header">
       <div class="header-left">
-        <h1>Task Board</h1>
+        <div class="logo">
+          <span class="material-icons-round">dashboard</span>
+          <h1>Task Board</h1>
+        </div>
         <p class="muted">Kanban • Project Management</p>
       </div>
       <div class="header-right">
         <div class="csv-buttons">
           <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
-          <button id="importCsvBtn" class="secondary small" title="Import tasks from CSV">📥 Import CSV</button>
-          <button id="exportCsvBtn" class="secondary small" title="Export tasks to CSV">📤 Export CSV</button>
+          <button id="importCsvBtn" class="secondary small icon-btn" title="Import tasks from CSV">
+            <span class="material-icons-round">file_upload</span>
+            Import CSV
+          </button>
+          <button id="exportCsvBtn" class="secondary small icon-btn" title="Export tasks to CSV">
+            <span class="material-icons-round">file_download</span>
+            Export CSV
+          </button>
         </div>
-        <button id="toggleSidebar" class="secondary small">👥 Team</button>
-        <button id="toggleTaskForm" class="small">+ New Task</button>
+        <button id="toggleSidebar" class="secondary small icon-btn">
+          <span class="material-icons-round">groups</span>
+          Team
+        </button>
+        <button id="toggleTaskForm" class="small primary-btn">
+          <span class="material-icons-round">add</span>
+          New Task
+        </button>
       </div>
     </header>
 
@@ -42,37 +60,49 @@
       <aside class="sidebar" id="sidebar">
         <!-- Members Section -->
         <section class="sidebar-section">
-          <h3>👥 Team Members</h3>
+          <div class="section-header">
+            <span class="material-icons-round">groups</span>
+            <h3>Team Members</h3>
+          </div>
           <div class="member-add">
             <input id="memberName" placeholder="Name" aria-label="Member name" />
             <input id="memberEmail" type="email" placeholder="Email" aria-label="Member email" />
-            <button id="addMember" class="success small">➕ Add</button>
+            <button id="addMember" class="success small icon-btn">
+              <span class="material-icons-round">person_add</span>
+              Add
+            </button>
           </div>
           <div id="membersList"></div>
         </section>
 
         <!-- Filters Section -->
         <section class="sidebar-section">
-          <h3>🔍 Filters</h3>
+          <div class="section-header">
+            <span class="material-icons-round">filter_list</span>
+            <h3>Filters</h3>
+          </div>
 
           <label>
+            <span class="material-icons-round">flag</span>
             Priority
             <select id="filterPriority" aria-label="Filter by priority">
-              <option value="">All</option>
-              <option value="low">🟢 Low</option>
-              <option value="medium">🟡 Medium</option>
-              <option value="high">🔴 High</option>
+              <option value="">All Priorities</option>
+              <option value="low">Low Priority</option>
+              <option value="medium">Medium Priority</option>
+              <option value="high">High Priority</option>
             </select>
           </label>
 
           <label>
+            <span class="material-icons-round">person</span>
             Assignee
             <select id="filterAssignee" aria-label="Filter by assignee">
-              <option value="">All</option>
+              <option value="">All Assignees</option>
             </select>
           </label>
 
           <label>
+            <span class="material-icons-round">calendar_today</span>
             Date Range
             <div class="date-range-inputs">
               <input type="date" id="filterStartDate" aria-label="Start Date" />
@@ -80,8 +110,16 @@
             </div>
           </label>
 
-          <button id="applyFilters" class="small">Apply</button>
-          <button id="clearFilters" class="secondary small">Clear</button>
+          <div class="filter-actions">
+            <button id="applyFilters" class="small primary-btn">
+              <span class="material-icons-round">check</span>
+              Apply
+            </button>
+            <button id="clearFilters" class="secondary small">
+              <span class="material-icons-round">clear</span>
+              Clear
+            </button>
+          </div>
         </section>
       </aside>
 
@@ -91,8 +129,13 @@
         <div class="task-form-modal" id="historyModal" style="display: none;">
           <div class="modal-content card history-modal-content">
             <div class="modal-header">
-              <h2>📜 Task History</h2>
-              <button id="closeHistoryModal" class="secondary small">✕</button>
+              <div class="modal-title">
+                <span class="material-icons-round">history</span>
+                <h2>Task History</h2>
+              </div>
+              <button id="closeHistoryModal" class="icon-btn secondary small">
+                <span class="material-icons-round">close</span>
+              </button>
             </div>
             <div id="historyList" class="history-list">
               <!-- History items will be injected here -->
@@ -104,18 +147,25 @@
         <div class="task-form-modal" id="taskFormModal" style="display: none;">
           <div class="modal-content card">
             <div class="modal-header">
-              <h2>📝 <span id="formTitle">Create Task</span></h2>
-              <button id="closeModal" class="secondary small">✕</button>
+              <div class="modal-title">
+                <span class="material-icons-round">task</span>
+                <h2><span id="formTitle">Create Task</span></h2>
+              </div>
+              <button id="closeModal" class="icon-btn secondary small">
+                <span class="material-icons-round">close</span>
+              </button>
             </div>
 
             <input id="taskId" type="hidden" />
 
             <label>
+              <span class="material-icons-round">title</span>
               Title
               <input id="title" placeholder="Task title" aria-label="Task title" />
             </label>
 
             <label>
+              <span class="material-icons-round">description</span>
               Description
               <textarea id="description" placeholder="Task description" aria-label="Task description"
                 rows="3"></textarea>
@@ -123,41 +173,54 @@
 
             <div class="form-row">
               <label>
+                <span class="material-icons-round">flag</span>
                 Priority
                 <select id="priority" aria-label="Task priority">
-                  <option value="low">🟢 Low</option>
-                  <option value="medium" selected>🟡 Medium</option>
-                  <option value="high">🔴 High</option>
+                  <option value="low">Low Priority</option>
+                  <option value="medium" selected>Medium Priority</option>
+                  <option value="high">High Priority</option>
                 </select>
               </label>
 
               <label>
+                <span class="material-icons-round">list_alt</span>
                 Status
                 <select id="status" aria-label="Task status">
-                  <option value="todo">📌 Todo</option>
-                  <option value="in_progress">⚡ In Progress</option>
-                  <option value="done">✅ Done</option>
-                  <option value="blocked">🚫 Blocked</option>
+                  <option value="todo">To Do</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="done">Done</option>
+                  <option value="blocked">Blocked</option>
                 </select>
               </label>
             </div>
 
             <label>
+              <span class="material-icons-round">person</span>
               Assignee
               <select id="assigneeSelect" aria-label="Assign to member">
-                <option value="">— Unassigned —</option>
+                <option value="">Unassigned</option>
               </select>
             </label>
 
             <label>
+              <span class="material-icons-round">local_offer</span>
               Tags (comma-separated)
               <input id="tags" placeholder="bug, ui, urgent" aria-label="Task tags" />
             </label>
 
             <div class="modal-actions">
-              <button id="createBtn" class="success">✨ Create</button>
-              <button id="updateBtn" class="success" style="display:none">💾 Save</button>
-              <button id="cancelEdit" class="secondary" style="display:none">Cancel</button>
+              <button id="createBtn" class="primary-btn">
+                <span class="material-icons-round">add</span>
+                Create Task
+              </button>
+              <button id="updateBtn" class="primary-btn" style="display:none">
+                <span class="material-icons-round">save</span>
+                Save Changes
+              </button>
+              <button id="cancelEdit" class="secondary" style="display:none">
+                <span class="material-icons-round">cancel</span>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -168,11 +231,13 @@
           <div class="kanban-column" data-status="todo">
             <div class="column-header todo-header">
               <div class="column-title">
-                <span class="column-icon">📌</span>
+                <span class="column-icon material-icons-round">pending_actions</span>
                 <h3>To Do</h3>
                 <span class="column-count" id="count-todo">0</span>
               </div>
-              <button class="add-task-btn" data-status="todo" title="Add task">+</button>
+              <button class="add-task-btn icon-btn" data-status="todo" title="Add task">
+                <span class="material-icons-round">add</span>
+              </button>
             </div>
             <div class="column-content" id="column-todo"></div>
           </div>
@@ -181,11 +246,13 @@
           <div class="kanban-column" data-status="in_progress">
             <div class="column-header progress-header">
               <div class="column-title">
-                <span class="column-icon">⚡</span>
+                <span class="column-icon material-icons-round">play_arrow</span>
                 <h3>In Progress</h3>
                 <span class="column-count" id="count-in_progress">0</span>
               </div>
-              <button class="add-task-btn" data-status="in_progress" title="Add task">+</button>
+              <button class="add-task-btn icon-btn" data-status="in_progress" title="Add task">
+                <span class="material-icons-round">add</span>
+              </button>
             </div>
             <div class="column-content" id="column-in_progress"></div>
           </div>
@@ -194,11 +261,13 @@
           <div class="kanban-column" data-status="done">
             <div class="column-header done-header">
               <div class="column-title">
-                <span class="column-icon">✅</span>
+                <span class="column-icon material-icons-round">check_circle</span>
                 <h3>Done</h3>
                 <span class="column-count" id="count-done">0</span>
               </div>
-              <button class="add-task-btn" data-status="done" title="Add task">+</button>
+              <button class="add-task-btn icon-btn" data-status="done" title="Add task">
+                <span class="material-icons-round">add</span>
+              </button>
             </div>
             <div class="column-content" id="column-done"></div>
           </div>
@@ -207,11 +276,13 @@
           <div class="kanban-column" data-status="blocked">
             <div class="column-header blocked-header">
               <div class="column-title">
-                <span class="column-icon">🚫</span>
+                <span class="column-icon material-icons-round">block</span>
                 <h3>Blocked</h3>
                 <span class="column-count" id="count-blocked">0</span>
               </div>
-              <button class="add-task-btn" data-status="blocked" title="Add task">+</button>
+              <button class="add-task-btn icon-btn" data-status="blocked" title="Add task">
+                <span class="material-icons-round">add</span>
+              </button>
             </div>
             <div class="column-content" id="column-blocked"></div>
           </div>
