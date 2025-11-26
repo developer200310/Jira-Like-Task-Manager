@@ -15,6 +15,8 @@
     rel="stylesheet">
   <!-- Add Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -43,6 +45,10 @@
             Export CSV
           </button>
         </div>
+        <button id="toggleDashboard" class="secondary small icon-btn">
+          <span class="material-icons-round">analytics</span>
+          Dashboard
+        </button>
         <button id="toggleSidebar" class="secondary small icon-btn">
           <span class="material-icons-round">groups</span>
           Team
@@ -138,8 +144,96 @@
         </section>
       </aside>
 
+      <!-- Dashboard View -->
+      <div class="dashboard-view" id="dashboardView" style="display: none;">
+        <div class="dashboard-header">
+          <div class="dashboard-title">
+            <span class="material-icons-round">analytics</span>
+            <h2>Project Dashboard</h2>
+          </div>
+          <button id="closeDashboard" class="secondary small icon-btn">
+            <span class="material-icons-round">close</span>
+            Back to Board
+          </button>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon todo-bg">
+              <span class="material-icons-round">pending_actions</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-todo">0</div>
+              <div class="stat-label">To Do</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon progress-bg">
+              <span class="material-icons-round">play_arrow</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-progress">0</div>
+              <div class="stat-label">In Progress</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon done-bg">
+              <span class="material-icons-round">check_circle</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-done">0</div>
+              <div class="stat-label">Completed</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon blocked-bg">
+              <span class="material-icons-round">block</span>
+            </div>
+            <div class="stat-content">
+              <div class="stat-value" id="stat-blocked">0</div>
+              <div class="stat-label">Blocked</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Task Distribution by Status</h3>
+            <div class="chart-container">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Task Priority Breakdown</h3>
+            <div class="chart-container">
+              <canvas id="priorityChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Team Workload</h3>
+            <div class="chart-container">
+              <canvas id="assigneeChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <h3>Completion Rate</h3>
+            <div class="chart-container">
+              <canvas id="completionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Kanban Board -->
-      <main class="board-container">
+      <main class="board-container" id="boardContainer">
         <!-- History Modal -->
         <div class="task-form-modal" id="historyModal" style="display: none;">
           <div class="modal-content card history-modal-content">

@@ -962,6 +962,259 @@ async function loadTasks() {
   setupDragAndDrop();
 }
 
+// ===== DASHBOARD =====
+let dashboardCharts = {
+  status: null,
+  priority: null,
+  assignee: null,
+  completion: null
+};
+
+function toggleDashboard() {
+  const dashboard = document.getElementById('dashboardView');
+  const board = document.getElementById('boardContainer');
+  
+  if (dashboard.style.display === 'none') {
+    dashboard.style.display = 'block';
+    board.style.display = 'none';
+    renderDashboard();
+  } else {
+    dashboard.style.display = 'none';
+    board.style.display = 'block';
+  }
+}
+
+function renderDashboard() {
+  if (!currentProject || allTasks.length === 0) {
+    showToast('No data to display. Create some tasks first!', 'info');
+    return;
+  }
+  
+  // Update stats cards
+  const stats = {
+    todo: allTasks.filter(t => t.status === 'todo').length,
+    in_progress: allTasks.filter(t => t.status === 'in_progress').length,
+    done: allTasks.filter(t => t.status === 'done').length,
+    blocked: allTasks.filter(t => t.status === 'blocked').length
+  };
+  
+  document.getElementById('stat-todo').textContent = stats.todo;
+  document.getElementById('stat-progress').textContent = stats.in_progress;
+  document.getElementById('stat-done').textContent = stats.done;
+  document.getElementById('stat-blocked').textContent = stats.blocked;
+  
+  // Render charts
+  renderStatusChart(stats);
+  renderPriorityChart();
+  renderAssigneeChart();
+  renderCompletionChart(stats);
+}
+
+function renderStatusChart(stats) {
+  const ctx = document.getElementById('statusChart');
+  
+  // Destroy existing chart
+  if (dashboardCharts.status) {
+    dashboardCharts.status.destroy();
+  }
+  
+  dashboardCharts.status = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['To Do', 'In Progress', 'Done', 'Blocked'],
+      datasets: [{
+        data: [stats.todo, stats.in_progress, stats.done, stats.blocked],
+        backgroundColor: [
+          '#6366f1',
+          '#0ea5e9',
+          '#10b981',
+          '#ef4444'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 15,
+            font: {
+              size: 12,
+              family: 'Inter'
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderPriorityChart() {
+  const ctx = document.getElementById('priorityChart');
+  
+  const priorityStats = {
+    low: allTasks.filter(t => t.priority === 'low').length,
+    medium: allTasks.filter(t => t.priority === 'medium').length,
+    high: allTasks.filter(t => t.priority === 'high').length
+  };
+  
+  if (dashboardCharts.priority) {
+    dashboardCharts.priority.destroy();
+  }
+  
+  dashboardCharts.priority = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Low Priority', 'Medium Priority', 'High Priority'],
+      datasets: [{
+        data: [priorityStats.low, priorityStats.medium, priorityStats.high],
+        backgroundColor: [
+          '#10b981',
+          '#f59e0b',
+          '#ef4444'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 15,
+            font: {
+              size: 12,
+              family: 'Inter'
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderAssigneeChart() {
+  const ctx = document.getElementById('assigneeChart');
+  
+  // Count tasks per assignee
+  const assigneeMap = {};
+  allTasks.forEach(task => {
+    if (task.assigneeId) {
+      const member = allMembers.find(m => m._id === task.assigneeId);
+      const name = member ? member.name : 'Unknown';
+      assigneeMap[name] = (assigneeMap[name] || 0) + 1;
+    } else {
+      assigneeMap['Unassigned'] = (assigneeMap['Unassigned'] || 0) + 1;
+    }
+  });
+  
+  const labels = Object.keys(assigneeMap);
+  const data = Object.values(assigneeMap);
+  
+  if (dashboardCharts.assignee) {
+    dashboardCharts.assignee.destroy();
+  }
+  
+  dashboardCharts.assignee = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: [
+          '#6366f1',
+          '#8b5cf6',
+          '#ec4899',
+          '#f43f5e',
+          '#f59e0b',
+          '#10b981',
+          '#0ea5e9',
+          '#06b6d4'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 15,
+            font: {
+              size: 12,
+              family: 'Inter'
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderCompletionChart(stats) {
+  const ctx = document.getElementById('completionChart');
+  
+  const total = allTasks.length;
+  const completed = stats.done;
+  const incomplete = total - completed;
+  
+  if (dashboardCharts.completion) {
+    dashboardCharts.completion.destroy();
+  }
+  
+  dashboardCharts.completion = new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Completed', 'Incomplete'],
+      datasets: [{
+        data: [completed, incomplete],
+        backgroundColor: [
+          '#10b981',
+          '#e5e7eb'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            padding: 15,
+            font: {
+              size: 12,
+              family: 'Inter'
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed || 0;
+              const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+              return `${label}: ${value} (${percentage}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// Dashboard event listeners
+document.getElementById('toggleDashboard').addEventListener('click', toggleDashboard);
+document.getElementById('closeDashboard').addEventListener('click', toggleDashboard);
+
 // ===== INITIALIZATION =====
 (async function init() {
   await loadMembers();
