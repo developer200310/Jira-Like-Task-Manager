@@ -27,10 +27,12 @@
     <!-- Top Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="logo">
-          <span class="material-icons-round">dashboard</span>
-          <h1>Task Board</h1>
-        </div>
+        <button id="toggleSidebar" class="secondary small icon-btn">
+           <div class="logo">
+            <span class="material-icons-round">dashboard</span>
+            <h1>Task Board</h1>
+          </div>
+        </button>
         <p class="muted">Kanban • Project Management</p>
       </div>
       <div class="header-right">
@@ -48,10 +50,6 @@
         <button id="toggleDashboard" class="secondary small icon-btn">
           <span class="material-icons-round">analytics</span>
           Dashboard
-        </button>
-        <button id="toggleSidebar" class="secondary small icon-btn">
-          <span class="material-icons-round">groups</span>
-          Team
         </button>
         <button id="toggleTaskForm" class="small primary-btn">
           <span class="material-icons-round">add</span>
@@ -104,7 +102,6 @@
           </div>
 
           <label>
-            <span class="material-icons-round">flag</span>
             Priority
             <select id="filterPriority" aria-label="Filter by priority">
               <option value="">All Priorities</option>
@@ -115,7 +112,6 @@
           </label>
 
           <label>
-            <span class="material-icons-round">person</span>
             Assignee
             <select id="filterAssignee" aria-label="Filter by assignee">
               <option value="">All Assignees</option>
@@ -123,21 +119,19 @@
           </label>
 
           <label>
-            <span class="material-icons-round">calendar_today</span>
             Date Range
             <div class="date-range-inputs">
               <input type="date" id="filterStartDate" aria-label="Start Date" />
+              <br />
               <input type="date" id="filterEndDate" aria-label="End Date" />
             </div>
           </label>
 
           <div class="filter-actions">
             <button id="applyFilters" class="small primary-btn">
-              <span class="material-icons-round">check</span>
               Apply
             </button>
             <button id="clearFilters" class="secondary small">
-              <span class="material-icons-round">clear</span>
               Clear
             </button>
           </div>
@@ -148,11 +142,9 @@
       <div class="dashboard-view" id="dashboardView" style="display: none;">
         <div class="dashboard-header">
           <div class="dashboard-title">
-            <span class="material-icons-round">analytics</span>
             <h2>Project Dashboard</h2>
           </div>
           <button id="closeDashboard" class="secondary small icon-btn">
-            <span class="material-icons-round">close</span>
             Back to Board
           </button>
         </div>
@@ -268,13 +260,11 @@
             <input id="taskId" type="hidden" />
 
             <label>
-              <span class="material-icons-round">title</span>
               Title
               <input id="title" placeholder="Task title" aria-label="Task title" />
             </label>
 
             <label>
-              <span class="material-icons-round">description</span>
               Description
               <textarea id="description" placeholder="Task description" aria-label="Task description"
                 rows="3"></textarea>
@@ -282,7 +272,6 @@
 
             <div class="form-row">
               <label>
-                <span class="material-icons-round">flag</span>
                 Priority
                 <select id="priority" aria-label="Task priority">
                   <option value="low">Low Priority</option>
@@ -292,7 +281,6 @@
               </label>
 
               <label>
-                <span class="material-icons-round">list_alt</span>
                 Status
                 <select id="status" aria-label="Task status">
                   <option value="todo">To Do</option>
@@ -304,7 +292,6 @@
             </div>
 
             <label>
-              <span class="material-icons-round">person</span>
               Assignee
               <select id="assigneeSelect" aria-label="Assign to member">
                 <option value="">Unassigned</option>
@@ -312,21 +299,20 @@
             </label>
 
             <label>
-              <span class="material-icons-round">local_offer</span>
               Tags (comma-separated)
               <input id="tags" placeholder="bug, ui, urgent" aria-label="Task tags" />
             </label>
 
             <div class="modal-actions">
-              <button id="createBtn" class="primary-btn">
+              <button id="createBtn" class="primary-btn small icon-btn">
                 <span class="material-icons-round">add</span>
                 Create Task
               </button>
-              <button id="updateBtn" class="primary-btn" style="display:none">
+              <button id="updateBtn" class="primary-btn small icon-btn" style="display:none">
                 <span class="material-icons-round">save</span>
                 Save Changes
               </button>
-              <button id="cancelEdit" class="secondary" style="display:none">
+              <button id="cancelEdit" class="secondary small icon-btn" style="display:none">
                 <span class="material-icons-round">cancel</span>
                 Cancel
               </button>
@@ -405,35 +391,30 @@
       <div class="modal-content card">
         <div class="modal-header">
           <div class="modal-title">
-            <span class="material-icons-round">create_new_folder</span>
             <h2>Create Project</h2>
           </div>
           <button id="closeProjectModal" class="icon-btn secondary small">
-            <span class="material-icons-round">close</span>
+            Back
           </button>
         </div>
 
         <label>
-          <span class="material-icons-round">title</span>
           Project Name
           <input id="projectName" placeholder="e.g. Website Redesign" />
         </label>
 
         <label>
-          <span class="material-icons-round">vpn_key</span>
           Key (Unique ID)
           <input id="projectKey" placeholder="e.g. WEB" style="text-transform: uppercase;" />
         </label>
 
         <label>
-          <span class="material-icons-round">description</span>
           Description
           <textarea id="projectDescription" rows="3" placeholder="Project goals..."></textarea>
         </label>
 
         <div class="modal-actions">
-          <button id="submitProjectBtn" class="primary-btn">
-            <span class="material-icons-round">check</span>
+          <button id="submitProjectBtn" class="primary-btn small icon-btn">
             Create Project
           </button>
         </div>
