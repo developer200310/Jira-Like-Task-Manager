@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Task Manager — Kanban Board</title>
+  <meta name="description" content="Jira-style Kanban board for task management" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <h1>Task Board</h1>
+        <p class="muted">Kanban • Project Management</p>
+      </div>
+      <div class="header-right">
+        <div class="csv-buttons">
+          <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
+          <button id="importCsvBtn" class="secondary small" title="Import tasks from CSV">📥 Import CSV</button>
+          <button id="exportCsvBtn" class="secondary small" title="Export tasks to CSV">📤 Export CSV</button>
+        </div>
+        <button id="toggleSidebar" class="secondary small">👥 Team</button>
+        <button id="toggleTaskForm" class="small">+ New Task</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- Sidebar (Members & Filters) -->
+      <aside class="sidebar" id="sidebar">
+        <!-- Members Section -->
+        <section class="sidebar-section">
+          <h3>👥 Team Members</h3>
+          <div class="member-add">
+            <input id="memberName" placeholder="Name" aria-label="Member name" />
+            <input id="memberEmail" type="email" placeholder="Email" aria-label="Member email" />
+            <button id="addMember" class="success small">➕ Add</button>
+          </div>
+          <div id="membersList"></div>
+        </section>
+
+        <!-- Filters Section -->
+        <section class="sidebar-section">
+          <h3>🔍 Filters</h3>
+
+          <label>
+            Priority
+            <select id="filterPriority" aria-label="Filter by priority">
+              <option value="">All</option>
+              <option value="low">🟢 Low</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="high">🔴 High</option>
+            </select>
+          </label>
+
+          <label>
+            Assignee
+            <select id="filterAssignee" aria-label="Filter by assignee">
+              <option value="">All</option>
+            </select>
+          </label>
+
+          <label>
+            Date Range
+            <div class="date-range-inputs">
+              <input type="date" id="filterStartDate" aria-label="Start Date" />
+              <input type="date" id="filterEndDate" aria-label="End Date" />
+            </div>
+          </label>
+
+          <button id="applyFilters" class="small">Apply</button>
+          <button id="clearFilters" class="secondary small">Clear</button>
+        </section>
+      </aside>
+
+      <!-- Kanban Board -->
+      <main class="board-container">
+        <!-- History Modal -->
+        <div class="task-form-modal" id="historyModal" style="display: none;">
+          <div class="modal-content card history-modal-content">
+            <div class="modal-header">
+              <h2>📜 Task History</h2>
+              <button id="closeHistoryModal" class="secondary small">✕</button>
+            </div>
+            <div id="historyList" class="history-list">
+              <!-- History items will be injected here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Form Modal -->
+        <div class="task-form-modal" id="taskFormModal" style="display: none;">
+          <div class="modal-content card">
+            <div class="modal-header">
+              <h2>📝 <span id="formTitle">Create Task</span></h2>
+              <button id="closeModal" class="secondary small">✕</button>
+            </div>
+
+            <input id="taskId" type="hidden" />
+
+            <label>
+              Title
+              <input id="title" placeholder="Task title" aria-label="Task title" />
+            </label>
+
+            <label>
+              Description
+              <textarea id="description" placeholder="Task description" aria-label="Task description"
+                rows="3"></textarea>
+            </label>
+
+            <div class="form-row">
+              <label>
+                Priority
+                <select id="priority" aria-label="Task priority">
+                  <option value="low">🟢 Low</option>
+                  <option value="medium" selected>🟡 Medium</option>
+                  <option value="high">🔴 High</option>
+                </select>
+              </label>
+
+              <label>
+                Status
+                <select id="status" aria-label="Task status">
+                  <option value="todo">📌 Todo</option>
+                  <option value="in_progress">⚡ In Progress</option>
+                  <option value="done">✅ Done</option>
+                  <option value="blocked">🚫 Blocked</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Assignee
+              <select id="assigneeSelect" aria-label="Assign to member">
+                <option value="">— Unassigned —</option>
+              </select>
+            </label>
+
+            <label>
+              Tags (comma-separated)
+              <input id="tags" placeholder="bug, ui, urgent" aria-label="Task tags" />
+            </label>
+
+            <div class="modal-actions">
+              <button id="createBtn" class="success">✨ Create</button>
+              <button id="updateBtn" class="success" style="display:none">💾 Save</button>
+              <button id="cancelEdit" class="secondary" style="display:none">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanban Columns -->
+        <div class="kanban-board">
+          <!-- Todo Column -->
+          <div class="kanban-column" data-status="todo">
+            <div class="column-header todo-header">
+              <div class="column-title">
+                <span class="column-icon">📌</span>
+                <h3>To Do</h3>
+                <span class="column-count" id="count-todo">0</span>
+              </div>
+              <button class="add-task-btn" data-status="todo" title="Add task">+</button>
+            </div>
+            <div class="column-content" id="column-todo"></div>
+          </div>
+
+          <!-- In Progress Column -->
+          <div class="kanban-column" data-status="in_progress">
+            <div class="column-header progress-header">
+              <div class="column-title">
+                <span class="column-icon">⚡</span>
+                <h3>In Progress</h3>
+                <span class="column-count" id="count-in_progress">0</span>
+              </div>
+              <button class="add-task-btn" data-status="in_progress" title="Add task">+</button>
+            </div>
+            <div class="column-content" id="column-in_progress"></div>
+          </div>
+
+          <!-- Done Column -->
+          <div class="kanban-column" data-status="done">
+            <div class="column-header done-header">
+              <div class="column-title">
+                <span class="column-icon">✅</span>
+                <h3>Done</h3>
+                <span class="column-count" id="count-done">0</span>
+              </div>
+              <button class="add-task-btn" data-status="done" title="Add task">+</button>
+            </div>
+            <div class="column-content" id="column-done"></div>
+          </div>
+
+          <!-- Blocked Column -->
+          <div class="kanban-column" data-status="blocked">
+            <div class="column-header blocked-header">
+              <div class="column-title">
+                <span class="column-icon">🚫</span>
+                <h3>Blocked</h3>
+                <span class="column-count" id="count-blocked">0</span>
+              </div>
+              <button class="add-task-btn" data-status="blocked" title="Add task">+</button>
+            </div>
+            <div class="column-content" id="column-blocked"></div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>

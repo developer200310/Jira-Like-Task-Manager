@@ -1,0 +1,11 @@
+Task ID,Title,Description,Status,Priority,Assignee,Tags
+TASK-001,"Setup development environment","Install Node.js, MongoDB, and project dependencies",todo,high,,"setup;backend"
+TASK-002,"Design database schema","Create models for tasks and team members",in_progress,high,,"database;design"
+TASK-003,"Implement user authentication","Add login and registration functionality",todo,medium,,"auth;security"
+TASK-004,"Create API endpoints","Build REST API for task management",in_progress,high,,"backend;api"
+TASK-005,"Design UI mockups","Create Figma designs for the application",done,medium,,"design;ui"
+TASK-006,"Implement drag and drop","Add drag-and-drop functionality to Kanban board",done,high,,"frontend;feature"
+TASK-007,"Write unit tests","Add test coverage for backend services",todo,low,,"testing;backend"
+TASK-008,"Deploy to production","Setup CI/CD pipeline and deploy",blocked,high,,"devops;deployment"
+TASK-009,"Add email notifications","Send email alerts for task updates",todo,low,,"feature;notifications"
+TASK-010,"Performance optimization","Optimize database queries and frontend rendering",todo,medium,,"optimization;performance"
