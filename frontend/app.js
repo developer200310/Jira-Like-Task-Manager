@@ -3,6 +3,8 @@ const API_BASE = 'http://localhost:5000/api';
 // ===== STATE =====
 let allTasks = [];
 let allMembers = [];
+let allProjects = [];
+let currentProject = null;
 let currentFilters = {};
 
 // ===== TOAST NOTIFICATION SYSTEM =====
@@ -203,6 +205,88 @@ async function importFromCSV(file) {
   }
 }
 
+// ===== PROJECTS API =====
+async function fetchProjects() {
+  try {
+    const res = await fetch(`${API_BASE}/projects`);
+    if (!res.ok) throw new Error('Failed to fetch projects');
+    return res.json();
+  } catch (error) {
+    showToast('Error loading projects', 'error');
+    return [];
+  }
+}
+
+async function createProject(name, key, description) {
+  try {
+    const res = await fetch(`${API_BASE}/projects`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, key, description })
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.message || 'Failed to create project');
+    }
+    showToast(`✨ Project "${name}" created`, 'success');
+    return res.json();
+  } catch (error) {
+    showToast(error.message, 'error');
+    throw error;
+  }
+}
+
+async function loadProjects() {
+  allProjects = await fetchProjects();
+  renderProjectsList();
+  
+  // If no project selected, select the first one
+  if (!currentProject && allProjects.length > 0) {
+    selectProject(allProjects[0]);
+  } else if (allProjects.length === 0) {
+    // No projects, show empty state
+    showToast('👋 Welcome! Create your first project to get started', 'info');
+  }
+}
+
+function selectProject(project) {
+  currentProject = project;
+  renderProjectsList(); // Update active state
+  
+  // Update header
+  const headerTitle = document.querySelector('.header-left h1');
+  headerTitle.textContent = project.name;
+  const headerSubtitle = document.querySelector('.header-left .muted');
+  headerSubtitle.textContent = `${project.key} • Kanban Board`;
+  
+  loadTasks();
+}
+
+function renderProjectsList() {
+  const list = document.getElementById('projectsList');
+  list.innerHTML = '';
+  
+  if (allProjects.length === 0) {
+    list.innerHTML = '<div class="empty-state"><p class="empty-state-description">No projects yet</p></div>';
+    return;
+  }
+  
+  allProjects.forEach(p => {
+    const div = document.createElement('div');
+    div.className = `project-item ${currentProject && currentProject._id === p._id ? 'active' : ''}`;
+    div.onclick = () => selectProject(p);
+    
+    div.innerHTML = `
+      <div class="project-icon material-icons-round">folder</div>
+      <div class="project-info">
+        <div class="project-name">${escapeHtml(p.name)}</div>
+        <div class="project-key">${escapeHtml(p.key)}</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
 // ===== MEMBERS API =====
 async function fetchMembers() {
   try {
@@ -286,11 +370,23 @@ async function loadMembers() {
 
 // ===== TASKS API =====
 async function createTask(title, description, priority, assigneeId, tags, status = 'todo') {
+  if (!currentProject) {
+    showToast('Please select or create a project first', 'error');
+    return;
+  }
   try {
     const res = await fetch(`${API_BASE}/tasks`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, priority, assigneeId, tags, status })
+      body: JSON.stringify({ 
+        title, 
+        description, 
+        priority, 
+        assigneeId, 
+        tags, 
+        status,
+        projectId: currentProject._id
+      })
     });
     if (!res.ok) throw new Error('Failed to create task');
     showToast(`✨ Task "${title}" created`, 'success');
@@ -302,8 +398,10 @@ async function createTask(title, description, priority, assigneeId, tags, status
 }
 
 async function listTasks(filter) {
+  if (!currentProject) return [];
   try {
-    const q = new URLSearchParams(filter || {}).toString();
+    const query = { ...filter, projectId: currentProject._id };
+    const q = new URLSearchParams(query).toString();
     const res = await fetch(`${API_BASE}/tasks?${q}`);
     if (!res.ok) throw new Error('Failed to fetch tasks');
     return res.json();
@@ -455,6 +553,43 @@ document.getElementById('csvFileInput').addEventListener('change', (e) => {
 
 document.getElementById('exportCsvBtn').addEventListener('click', () => {
   exportToCSV();
+});
+
+// Project Modal
+const projectModal = document.getElementById('projectModal');
+const createProjectBtn = document.getElementById('createProjectBtn');
+const closeProjectModal = document.getElementById('closeProjectModal');
+const submitProjectBtn = document.getElementById('submitProjectBtn');
+
+createProjectBtn.addEventListener('click', () => {
+  document.getElementById('projectName').value = '';
+  document.getElementById('projectKey').value = '';
+  document.getElementById('projectDescription').value = '';
+  projectModal.style.display = 'flex';
+});
+
+closeProjectModal.addEventListener('click', () => {
+  projectModal.style.display = 'none';
+});
+
+submitProjectBtn.addEventListener('click', async () => {
+  const name = document.getElementById('projectName').value.trim();
+  const key = document.getElementById('projectKey').value.trim().toUpperCase();
+  const desc = document.getElementById('projectDescription').value.trim();
+  
+  if (!name || !key) {
+    showToast('Name and Key are required', 'error');
+    return;
+  }
+  
+  try {
+    const project = await createProject(name, key, desc);
+    projectModal.style.display = 'none';
+    await loadProjects();
+    selectProject(project);
+  } catch (e) {
+    // Error handled in createProject
+  }
 });
 
 // Modal functions
@@ -828,11 +963,11 @@ async function loadTasks() {
 }
 
 // ===== INITIALIZATION =====
-window.addEventListener('load', async () => {
-  showToast('🚀 Kanban Board loaded', 'success');
+(async function init() {
   await loadMembers();
-  await loadTasks();
-
+  await loadProjects();
+  // Tasks loaded via selectProject -> loadTasks
+  
   // Close modal on outside click
   document.getElementById('taskFormModal').addEventListener('click', (e) => {
     if (e.target.id === 'taskFormModal') {
@@ -846,4 +981,4 @@ window.addEventListener('load', async () => {
       document.getElementById('historyModal').style.display = 'none';
     }
   });
-});
+})();

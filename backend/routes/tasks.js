@@ -16,6 +16,9 @@ async function createHistory(taskId, action, details) {
 // Create
 router.post('/', async (req, res) => {
   try {
+    if (!req.body.projectId) {
+      return res.status(400).json({ error: 'projectId is required' });
+    }
     const task = await Task.create(req.body);
     await createHistory(task._id, 'create', `Task created: ${task.title}`);
     res.status(201).json(task);
@@ -32,6 +35,7 @@ router.get('/', async (req, res) => {
     if (req.query.assigneeId) filter.assigneeId = req.query.assigneeId;
     if (req.query.tag) filter.tags = req.query.tag;
     if (req.query.priority) filter.priority = req.query.priority;
+    if (req.query.projectId) filter.projectId = req.query.projectId;
 
     // Date filtering
     if (req.query.startDate || req.query.endDate) {

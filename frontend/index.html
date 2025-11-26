@@ -58,6 +58,21 @@
     <div class="main-content">
       <!-- Sidebar (Members & Filters) -->
       <aside class="sidebar" id="sidebar">
+        <!-- Projects Section -->
+        <section class="sidebar-section">
+          <div class="section-header">
+            <span class="material-icons-round">folder</span>
+            <h3>Projects</h3>
+          </div>
+          <div class="project-actions">
+            <button id="createProjectBtn" class="primary-btn small icon-btn" style="width: 100%; justify-content: center;">
+              <span class="material-icons-round">add</span>
+              New Project
+            </button>
+          </div>
+          <div id="projectsList" class="projects-list"></div>
+        </section>
+
         <!-- Members Section -->
         <section class="sidebar-section">
           <div class="section-header">
@@ -290,6 +305,48 @@
       </main>
     </div>
   </div>
+
+    <!-- Create Project Modal -->
+    <div class="task-form-modal" id="projectModal" style="display: none;">
+      <div class="modal-content card">
+        <div class="modal-header">
+          <div class="modal-title">
+            <span class="material-icons-round">create_new_folder</span>
+            <h2>Create Project</h2>
+          </div>
+          <button id="closeProjectModal" class="icon-btn secondary small">
+            <span class="material-icons-round">close</span>
+          </button>
+        </div>
+
+        <label>
+          <span class="material-icons-round">title</span>
+          Project Name
+          <input id="projectName" placeholder="e.g. Website Redesign" />
+        </label>
+
+        <label>
+          <span class="material-icons-round">vpn_key</span>
+          Key (Unique ID)
+          <input id="projectKey" placeholder="e.g. WEB" style="text-transform: uppercase;" />
+        </label>
+
+        <label>
+          <span class="material-icons-round">description</span>
+          Description
+          <textarea id="projectDescription" rows="3" placeholder="Project goals..."></textarea>
+        </label>
+
+        <div class="modal-actions">
+          <button id="submitProjectBtn" class="primary-btn">
+            <span class="material-icons-round">check</span>
+            Create Project
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast-container"></div>
 
   <script src="app.js"></script>
 </body>

@@ -855,3 +855,57 @@ label textarea {
     flex: 0 0 280px;
   }
 }
+/* ===== PROJECTS ===== */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md);
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-subtle);
+}
+
+.project-item:hover {
+  background: var(--bg-app);
+  color: var(--text-main);
+}
+
+.project-item.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.project-icon {
+  font-size: 20px;
+}
+
+.project-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.project-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+.project-key {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.project-actions {
+  margin-bottom: var(--spacing-sm);
+}
